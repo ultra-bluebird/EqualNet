@@ -1,0 +1,93 @@
+# SPDX-License-Identifier: MIT OR Apache-2.0
+# Proposed instrumented-bench protocol. This document authorizes nothing:
+# no device access, testing, publication, or external action.
+protocol:
+  title: Bench evaluation of counting alternatives, persistence paths, and release linkage
+  status: proposed
+  governance_revision: UNPINNED          # pin a revision before any use
+  governance_sha256: UNPINNED            # SHA-256 commitment of that revision
+  data_class: host-local                 # raw artifacts never leave the bench
+
+authorization:                           # every gate must be separately granted
+  equipment_access: pending
+  facility_use: pending
+  participant_involvement: none_planned
+  external_action: not_authorized
+  publication: not_authorized
+
+scope:
+  allowed_inputs:
+    - synthetic frames and inanimate test fixtures
+    - synthetic occupancy histories
+    - artificial scenes without passengers
+  prohibited_inputs:
+    - passengers, staff, or any identifiable person
+    - journey, account, wallet, or device-owner data
+    - biometric, medical, or augmentation-related signals
+  stop_rule: >
+    If personal data appears in any artifact, stop, quarantine the artifact,
+    do not process it further, and notify the accountable human reviewer.
+
+method_validation:                       # required before reading any device result
+  stand_in_controls:
+    positive_control: planted leak on a synthetic stand-in must be detected
+    negative_control: clean synthetic run must produce no detections
+    fault_required_control: a leaky mode without an injected fault must stay quiet
+  interpretation: >
+    A negative scan is limited to the searched encodings and fragment length and
+    never establishes absence.
+
+counting_comparison:
+  scenarios: [normal_flow, occlusion, simultaneous_crossings, door_vibration, timing_offset, mobility_aid_fixtures]
+  fixture_note: inanimate fixtures only; described by their builders in their own terms
+  reference_procedure: independently reviewed; reference uncertainty recorded
+  outcomes:
+    - count error (estimate minus reference, persons per trial)
+    - bias
+    - per-scenario status (meets, fails, undetermined)
+  burdens_reported_separately:
+    privacy_data_class: [aggregate_count_only, non_image_signal, transient_image_edge, image_retained]
+    energy_kwh_per_year: metered, with uncertainty
+    maintenance_hours_per_year: logged
+    embodied_impact: estimate with declared boundary
+  aggregation: none                      # no combined score
+
+persistence_inspection:
+  paths: [sensor_firmware, accelerator_memory, os_buffers, swap, crash_capture, remote_console, network_egress, diagnostic_logs, maintenance_interfaces, persistent_storage]
+  instrumentation:
+    packet_capture: bench network segment only
+    filesystem_snapshot: read-only image with before and after SHA-256 digests
+    memory_inspection: only through a vendor-documented supported method, else record not_inspected
+    clock: declared source with recorded skew
+  fault_injection:
+    - {id: process_crash, observe: crash capture and temporary files}
+    - {id: power_loss, observe: persistent storage and firmware state}
+    - {id: watchdog_reset, observe: diagnostic logs}
+    - {id: resource_exhaustion, observe: swap and crash capture}
+    - {id: storage_full, observe: log rotation and error paths}
+    - {id: network_partition, observe: buffering and retry paths}
+    - {id: debug_logging_enabled, observe: diagnostic logs}
+    - {id: maintenance_console_attached, observe: remote console and maintenance interfaces}
+  finding_values: [inspected_clean, retention_observed, not_applicable_with_rationale, not_inspected]
+  evidence_required: [method, artifact_sha256, synthetic_canary_count, searched_encodings]
+
+release_linkage:
+  histories: synthetic only
+  policy_grid:
+    rounding: [1, 5, 10]
+    suppress_below: [0, 3, 5]
+    window_steps: [1, 3, 6]
+  adversary: declared prior, ambient model, and released fields
+  outputs: [exact_advantage, attack_precision, attack_recall, transformation_error, suppression_probability]
+  separation: transformation effects reported apart from measurement error
+
+recording:
+  decision_history: append-only with SHA-256 chain
+  retention: bench-local artifacts deleted at close by a named rule; only digests and counts leave
+  corrections: allowed as new entries; originals preserved
+
+rights_and_access:
+  refusal: withdrawal of any permission carries no penalty to standing, protections, or ordinary service
+  accessible_formats: text and structured data; asynchronous or assisted review accepted
+  human_fallback: a named human reviewer decides every unresolved finding
+  unknown_effects: unresolved findings block the proposed change only
